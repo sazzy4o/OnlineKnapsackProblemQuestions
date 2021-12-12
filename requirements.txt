@@ -1,3 +1,5 @@
 ortools
 numpy
 pandas
+scipy
+tqdm

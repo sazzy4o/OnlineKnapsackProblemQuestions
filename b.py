@@ -28,7 +28,6 @@ def sample_infnitesimal_weight(epsilon,size=None):
 
 sample_infnitesimal_weight(0.1)
 # %%
-# transform [0,1) random to (0,epsilon] and return
 sample_value = np.random.uniform
 sample_value(5,10,size=5)
 #%%
@@ -97,7 +96,7 @@ for i in range(trials):
 
 df = pd.DataFrame(rows)
 imperical_ratio = df['best_value'].mean()/df['online_value'].mean()
-print('Imperical Ratio:',imperical_ratio)
+print('Empirical Ratio:',imperical_ratio)
 print('Theoretical Ratio:',1 + np.log(p_max/p_min))
 # %%
 

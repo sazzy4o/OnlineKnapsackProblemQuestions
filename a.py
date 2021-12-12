@@ -21,15 +21,23 @@ capacities = [1]
 solver.Init(values, weights, capacities)
 best_value = solver.Solve()
 best_value
+# %% Cell based on https://stackoverflow.com/a/18444710/3558475
+import scipy.stats as stats
+def trunc_normal(mean, sd, low, upp, size=None):
+    if size is not None:
+        return np.array(stats.truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd).rvs(size))
+    return stats.truncnorm((low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd).rvs(1)[0]
 # %%
 # transform [0,1) random to (0,epsilon] and return
+# def sample_infnitesimal_weight(epsilon,size=None):
+#     return ((np.random.random(size=size)*-1)+1)*epsilon
 def sample_infnitesimal_weight(epsilon,size=None):
-    return ((np.random.random(size=size)*-1)+1)*epsilon
+    return trunc_normal(epsilon,epsilon/2,0,epsilon,size=size)
 
 sample_infnitesimal_weight(0.1)
 # %%
-# transform [0,1) random to (0,epsilon] and return
-sample_value = np.random.uniform
+# sample_value = np.random.uniform
+sample_value = lambda p_min,p_max,size=None: trunc_normal(np.mean([p_min,p_max]),(p_max-p_min)/2,p_min,p_max,size=size)
 sample_value(5,10,size=5)
 #%%
 @functools.lru_cache(maxsize=100)
@@ -62,7 +70,7 @@ epsilon = 0.001
 trials = 100
 items = 25000
 
-p_max = 10
+p_max = 1.5
 p_min = 1
 
 solver = pywrapknapsack_solver.KnapsackSolver(
@@ -96,6 +104,6 @@ for i in range(trials):
 
 df = pd.DataFrame(rows)
 imperical_ratio = df['best_value'].mean()/df['online_value'].mean()
-print('Imperical Ratio:',imperical_ratio)
+print('Empirical Ratio:',imperical_ratio)
 print('Theoretical Ratio:',1 + np.log(p_max/p_min))
 # %%
